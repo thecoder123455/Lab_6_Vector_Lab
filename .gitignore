@@ -1,0 +1,6 @@
+#dependency files
+*.d
+#Object files
+*.o 
+#the exe file
+lab5

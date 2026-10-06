@@ -16,7 +16,7 @@
 int main(){
     char userInput[100];
 
-    printf("Hello and welcome to the vector calculator! Please enter a vector to get started then you can add vectors, subtract vectors, or multiply by a constant. DO NOT enter more than 10 vectors :)\n");
+    printf("Hello and welcome to the vector calculator! Please enter a vector to get started then you can add vectors, subtract vectors, or multiply by a constant. DO NOT enter more than 10 vectors! :)\n");
     do{
         printf("New Vector: ");
         fgets(userInput, sizeof(userInput), stdin);
