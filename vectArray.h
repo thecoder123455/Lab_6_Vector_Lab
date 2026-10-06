@@ -2,7 +2,7 @@
 * filename: vectArray.h
 * author: Nick G
 * date 9/29/26
-* Stores, adds, clears, and lists the vectors
+* Stores, adds, clears, and lists the vectors :)
  */
 #include "vect.h"
 
