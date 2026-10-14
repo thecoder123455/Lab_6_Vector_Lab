@@ -34,47 +34,62 @@ char getOperator(const char *input){
     return '\0';
 }
 
+    //searches for "="
+int hasEquals(const char *input){
+    for(int i = 0; input[i] != '\0'; i++){
+        if(input[i] == '='){
+            return 1;
+        }
+    } 
+    return 0;
+}
+
+
+//THIS WAS HARD 
 void vectParse(char *userInput){
-    //getting rid of commas
+
+    // getting rid of commas
     for(int i = 0; userInput[i] != '\0'; i++){
-    if(userInput[i] == ','){
-        userInput[i] = ' ';
+        if(userInput[i] == ','){
+            userInput[i] = ' ';
+        }
     }
-    }
 
-    char operation = getOperator(userInput);
 
-    //This means we're creating a new vector instead of 
-    //adjusting a current one
-    if(getOperator(userInput) == '\0'){
-
+    //CREATING VECTORS
     char destVect[8];
     double x, y, z = 0;
 
-    int count = sscanf(userInput, "%7s = %lf %lf %lf", destVect, &x, &y, &z); 
+    int vectorCount = sscanf(userInput, "%7s = %lf %lf %lf", destVect, &x, &y, &z);
 
-    if(count == 3){
-        z = 0;
-    }
-    if(count < 3){
-        printf("INVALID VECTOR FORMAT\n");
+    if(vectorCount >= 3){
+
+        if(vectorCount == 3){
+            z = 0;
+        }
+
+        vect *v3 = createVect(destVect, x, y, z);
+
+        if(v3 != NULL){
+            printf("%s = %f, %f, %f\n", v3->name, v3->x, v3->y, v3->z);
+        }
+
         return;
     }
 
-    vect *v3 = createVect(destVect, x, y, z);
-    
-    if(v3 != NULL){
-         printf("%s = %1f %1f %f\n", v3->name, v3->x, v3->y, v3->z);
-    }
-   
+    char operation = getOperator(userInput);
+    int assignment = hasEquals(userInput);
 
-    } else if (operation == '+' || operation == '-'){
-        
+
+
+    // ADDITION AND SUBTRACTION
+    if((operation == '+' || operation == '-') && assignment == 1){
+
         char destName[8];
         char v1Name[8];
         char v2Name[8];
 
-        int count = sscanf(userInput, "%7s = %7s %*c %7s \n", destName, v1Name, v2Name);
+        int count = sscanf(userInput,"%7s = %7s %*c %7s", destName, v1Name, v2Name);
 
         if(count != 3){
             printf("INVALID VECTOR OPERATION\n");
@@ -90,22 +105,29 @@ void vectParse(char *userInput){
         }
 
         vect result = vectCalc(*v1, *v2, operation, 0);
+
         strcpy(result.name, destName);
         addVect(result);
 
-       printf("%s = %f, %f, %f\n", result.name, result.x, result.y, result.z);
+        printf("%s = %f, %f, %f\n", result.name, result.x, result.y, result.z);
+    }
 
-      // SCALAR MULTIPLICATION
-    } else if(operation == '*'){
+
+    // SCALAR MULTIPLICATION
+    else if((operation == '*') && assignment == 1){
+
         char destName[8];
         char v1Name[8];
         double multiplier;
 
-        int count = sscanf(userInput, "%7s = %7s * %lf", destName, v1Name,&multiplier);
+        int count = sscanf(userInput, "%7s = %7s * %lf", destName, v1Name, &multiplier);
 
         if(count != 3){
-            printf("INVALID VECTOR MULTIPLICATION\n");
-            return;
+            int check = sscanf(userInput, "%7s = %lf * %7s", destName, &multiplier, v1Name);
+            if(check != 3){
+                printf("INVALID VECTOR MULTIPLICATION\n");
+                return;
+            }
         }
 
         vect *v1 = getVect(v1Name);
@@ -116,11 +138,43 @@ void vectParse(char *userInput){
         }
 
         vect dummyVect = {0};
+
         vect result = vectCalc(*v1, dummyVect, operation, multiplier);
+
         strcpy(result.name, destName);
+
         addVect(result);
 
         printf("%s = %f, %f, %f\n", result.name, result.x, result.y, result.z);
+    } else if (assignment == 0){
+
+        // ADDING/SUBTRACTING/MULTIPLYING VECTORS WITH NO ASSIGNMENT
+    char v1Name[8];
+    char v2Name[8];
+
+    int count = sscanf(userInput, "%7s %*c %7s", v1Name, v2Name);
+
+    if(count != 2){
+        printf("INVALID VECTOR OPERATION\n");
+        return;
+    }
+    vect *v1 = getVect(v1Name);
+    vect *v2 = getVect(v2Name);
+
+    if(v1 == NULL || v2 == NULL){
+            printf("ONE OR BOTH VECTORS ARE NOT DEFINED\n");
+            return;
+        }
+
+    vect result = vectCalc(*v1, *v2, operation, 0);
+
+        printf("ans = %f, %f, %f\n", result.x, result.y, result.z);
+    }
+
+
+
+    else{
+        printf("INVALID VECTOR FORMAT\n");
     }
 }
 
