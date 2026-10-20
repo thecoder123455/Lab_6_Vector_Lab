@@ -5,6 +5,7 @@
 * Turning user input data into vectors
  */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "vect.h"
 #include "vectParse.h"
@@ -27,6 +28,13 @@
 char getOperator(const char *input){
     for(int i = 0; input[i] != '\0'; i++){
         if(input[i] == '+' || input[i] == '-' || input[i] == '*'){
+            if(input[i] == '+' || input[i] == '-'){
+                char *numberEnd;
+                strtod(&input[i], &numberEnd);
+                if(numberEnd != &input[i]){
+                    continue;
+                }
+            }
             return input[i];
         }
     }
@@ -123,4 +131,3 @@ void vectParse(char *userInput){
         printf("%s = %f, %f, %f\n", result.name, result.x, result.y, result.z);
     }
 }
-
